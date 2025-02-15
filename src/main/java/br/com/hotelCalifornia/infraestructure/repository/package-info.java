@@ -1,0 +1,1 @@
+package br.com.hotelCalifornia.infraestructure.repository;
