@@ -16,19 +16,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.hotelCalifornia.domain.service.HotelCaliforniaService;
 import br.com.hotelCalifornia.infraestructure.model.HotelCaliforniaModel;
-import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping(("/api/hotel")) // localhost:8080/api/hotel
-@RequiredArgsConstructor
+@RequestMapping("/api/hotel") // localhost:8080/api/hotel
+//@RequiredArgsConstructor
 public class HotelCaliforniaController {
 	
 	@Autowired(required=true)
 	private HotelCaliforniaService service;
 	
 	@GetMapping
-	public List listarTudo() {
-		return service.findAll();
+	public ResponseEntity<List> listarTudo() {
+		 return ResponseEntity.ok(service.findAll());
 	}
 	
 	@PostMapping
