@@ -1,9 +1,9 @@
 package br.com.hotelCalifornia.domain.service;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.logging.Logger;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,17 +13,16 @@ import br.com.hotelCalifornia.infraestructure.model.HotelCaliforniaModel;
 import br.com.hotelCalifornia.infraestructure.repository.HotelCaliforniaRepository;
 
 
-import java.util.logging.Logger;
-
-
 @Service
 public class HotelCaliforniaService {
 	
+	@Autowired
 	private HotelCaliforniaRepository repository;
 
 	private Logger logger = Logger.getLogger(HotelCaliforniaService.class.getName());
-
-	public List<?> findAll() {
+	
+	
+	public List<HotelCaliforniaModel> findAll() {
 	
 		logger.info("Metodo findAll");
          
@@ -37,14 +36,14 @@ public class HotelCaliforniaService {
 		return repository.save(hotelCaliforniaModel);
 		
 	}
-	public ResponseEntity<HotelCaliforniaModel> acharId(@PathVariable UUID id) {
+	public ResponseEntity<HotelCaliforniaModel> acharId(@PathVariable Long id) {
 		
     		logger.info("Metodo acharId");
 	
 	    	return repository.findById(id).map(mapping->ResponseEntity.ok().body(mapping))
 	    			.orElse(ResponseEntity.notFound().build());
 	}
-	public ResponseEntity<HotelCaliforniaModel> update(@PathVariable UUID id, @RequestBody HotelCaliforniaModel hotelCaliforniaModel) {
+	public ResponseEntity<HotelCaliforniaModel> update(@PathVariable Long id, @RequestBody HotelCaliforniaModel hotelCaliforniaModel) {
 		logger.info("Metodo update");
 
 		
@@ -63,7 +62,7 @@ public class HotelCaliforniaService {
 	    			
 	  }
 	
-	 public ResponseEntity<?> deletar(@PathVariable UUID id) {
+	 public ResponseEntity<?> deletar(@PathVariable Long id) {
 		 
 		logger.info("Metodo delete");
  

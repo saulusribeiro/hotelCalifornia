@@ -1,5 +1,7 @@
 package br.com.hotelCalifornia.infraestructure.model;
 
+import java.io.Serializable;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.persistence.Column;
@@ -21,12 +23,18 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name="hotel_california")
-public class HotelCaliforniaModel {
+public class HotelCaliforniaModel implements Serializable {
 	
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Id
-	private UUID id;
+//	private UUID id;
+	private Long id;
 
 	@Column(name="name")
 	private String name;
@@ -71,6 +79,36 @@ public class HotelCaliforniaModel {
 	public void setCnpj(String cnpj) {
 		this.cnpj = cnpj;
 	}
+
+	public HotelCaliforniaModel() {
+		 
+	}
+
+	public HotelCaliforniaModel(String name, String local, int capacidade, String cnpj) {
+		this.name = name;
+		this.local = local;
+		this.capacidade = capacidade;
+		this.cnpj = cnpj;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(capacidade, cnpj, local, name);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		HotelCaliforniaModel other = (HotelCaliforniaModel) obj;
+		return capacidade == other.capacidade && Objects.equals(cnpj, other.cnpj) && Objects.equals(local, other.local)
+				&& Objects.equals(name, other.name);
+	}
+	
 	
 	
 

@@ -36,17 +36,17 @@ public class HotelCaliforniaController {
 		
 	}
     @GetMapping(value = "{id}")
-    public ResponseEntity<HotelCaliforniaModel> buscarId(@PathVariable UUID id) {
+    public ResponseEntity<HotelCaliforniaModel> buscarId(@PathVariable Long id) {
     	return service.acharId(id);
     }
     
     @PutMapping
-    public ResponseEntity<HotelCaliforniaModel> atualizar(@PathVariable UUID id, @RequestBody HotelCaliforniaModel hotelCaliforniaModel) {
+    public ResponseEntity<HotelCaliforniaModel> atualizar(@PathVariable Long id, @RequestBody HotelCaliforniaModel hotelCaliforniaModel) {
     	return service.update(id, hotelCaliforniaModel);
     }
     
     @DeleteMapping(path = "/id")
-    public ResponseEntity<?> remover(@PathVariable UUID id) {
+    public ResponseEntity<?> remover(@PathVariable Long id) {
         	return service.deletar(id);
     }	  
     
