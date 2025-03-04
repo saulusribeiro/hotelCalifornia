@@ -2,7 +2,6 @@ package br.com.hotelCalifornia.infraestructure.model;
 
 import java.io.Serializable;
 import java.util.Objects;
-import java.util.UUID;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,7 +32,6 @@ public class HotelCaliforniaModel implements Serializable {
 
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Id
-//	private UUID id;
 	private Long id;
 
 	@Column(name="name")
@@ -47,6 +45,10 @@ public class HotelCaliforniaModel implements Serializable {
 	
 	@Column(name="cnpj")
 	private String cnpj;
+	
+	public Long getId() {
+		return id;
+	}
 
 	public String getName() {
 		return name;
