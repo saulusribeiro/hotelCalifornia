@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.hotelCalifornia.domain.service.HotelCaliforniaService;
 import br.com.hotelCalifornia.infraestructure.model.HotelCaliforniaModel;
 import br.com.hotelCalifornia.infraestructure.repository.HotelCaliforniaRepository;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/app/hotel") // localhost:8080/api/hotel
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class HotelCaliforniaController {
 	
-	@Autowired(required=true)
-	private HotelCaliforniaService service;
+	private final HotelCaliforniaService service = null;
 	
 	@Autowired
 	private HotelCaliforniaRepository repository;
