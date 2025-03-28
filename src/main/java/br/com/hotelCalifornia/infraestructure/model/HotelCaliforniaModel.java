@@ -49,6 +49,9 @@ public class HotelCaliforniaModel implements Serializable {
 	public Long getId() {
 		return id;
 	}
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getName() {
 		return name;
@@ -85,17 +88,10 @@ public class HotelCaliforniaModel implements Serializable {
 	public HotelCaliforniaModel() {
 		 
 	}
-
-	public HotelCaliforniaModel(String name, String local, int capacidade, String cnpj) {
-		this.name = name;
-		this.local = local;
-		this.capacidade = capacidade;
-		this.cnpj = cnpj;
-	}
-
+		
 	@Override
 	public int hashCode() {
-		return Objects.hash(capacidade, cnpj, local, name);
+		return Objects.hash(capacidade, cnpj, id, local, name);
 	}
 
 	@Override
@@ -107,10 +103,12 @@ public class HotelCaliforniaModel implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		HotelCaliforniaModel other = (HotelCaliforniaModel) obj;
-		return capacidade == other.capacidade && Objects.equals(cnpj, other.cnpj) && Objects.equals(local, other.local)
-				&& Objects.equals(name, other.name);
+		return capacidade == other.capacidade && Objects.equals(cnpj, other.cnpj) && Objects.equals(id, other.id)
+				&& Objects.equals(local, other.local) && Objects.equals(name, other.name);
 	}
+
 	
+
 	
 	
 

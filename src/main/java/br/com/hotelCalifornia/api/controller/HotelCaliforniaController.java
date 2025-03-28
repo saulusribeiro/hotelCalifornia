@@ -1,8 +1,10 @@
 package br.com.hotelCalifornia.api.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,11 +23,12 @@ import br.com.hotelCalifornia.infraestructure.repository.HotelCaliforniaReposito
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/app/hotel") // localhost:8080/api/hotel
-@RequiredArgsConstructor
+@RequestMapping("/app/hotel") // localhost:8080/api/hotel  e http://localhost:8090/swagger-ui/index.html
+//@RequiredArgsConstructor
 public class HotelCaliforniaController {
 	
-	private final HotelCaliforniaService service = null;
+	@Autowired
+	private HotelCaliforniaService service;
 	
 	@Autowired
 	private HotelCaliforniaRepository repository;
@@ -34,23 +38,38 @@ public class HotelCaliforniaController {
 	public ResponseEntity<List> listarTudo() {
 		 return ResponseEntity.ok(service.findAll());
 	}
+	@GetMapping("/cnpj/{cnpj}")
+	@ResponseBody
+    public ResponseEntity<HotelCaliforniaModel> AcharPeloPorCnpj(@PathVariable String cnpj) {
+		return service.buscarPorCnpj(cnpj);
+    }
 	
-	@PostMapping
-	
+	@PostMapping(value= "/inserir")
 	public HotelCaliforniaModel criar(@RequestBody HotelCaliforniaModel hotelCaliforniaModel) {
+		
 		return service.create(hotelCaliforniaModel);
 		
 	}
     @GetMapping(value = "/buscar/{id}")
-    @ResponseBody
-    public ResponseEntity<HotelCaliforniaModel> buscarId(@PathVariable Long id) {
-    	return service.acharId(id);
+    public ResponseEntity<Object> buscarId(@PathVariable(value="id") Long id) {
+    	Optional<HotelCaliforniaModel> californiaModel = service.acharId(id);
+    	
+    	if(!californiaModel.isPresent()) 
+    		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel não encontrado");
+ 		return  ResponseEntity.status(HttpStatus.OK).body(service.acharId(id));
+    
     }
     
     @PutMapping(value="/editar/{id}")
     @ResponseBody
-    public HotelCaliforniaModel editar(@PathVariable Long id,@RequestBody HotelCaliforniaModel hotelCaliforniaModel) {
-            return service.atualizar(id, hotelCaliforniaModel);
+    public ResponseEntity<Object> editar(@PathVariable(value="id")Long id,@RequestBody HotelCaliforniaModel hotelCaliforniaModel) {
+    	
+    	Optional<HotelCaliforniaModel> hotelOptional = service.acharId(id);
+    	
+    	if(!hotelOptional.isPresent()) {
+    		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel não encontrado");}
+    	service.atualizar(id, hotelCaliforniaModel);
+    	return ResponseEntity.status(HttpStatus.OK).body(hotelCaliforniaModel);
     }
     
     @DeleteMapping(path = "/deletar/{id}")
