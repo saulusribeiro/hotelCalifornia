@@ -16,5 +16,9 @@ public interface HotelCaliforniaRepository extends JpaRepository<HotelCalifornia
 	
 	@Query(value="SELECT * from hotel_california where cnpj =:cnpj", nativeQuery = true)
 	Optional<HotelCaliforniaModel> acharPorCnpj(@PathVariable(value = "cnpj")String cnpj);
+	
+	@Query(value="SELECT * from hotel_california where local =:local", nativeQuery = true)
+	Optional<HotelCaliforniaModel> acharPorLocal(@PathVariable(value = "local")String local);
+
 
 }

@@ -35,15 +35,20 @@ public class HotelCaliforniaController {
 	
 	@GetMapping(value= "/listar")
 	@ResponseBody
-	public ResponseEntity<List> listarTudo() {
+	public ResponseEntity<Object> listarTudo() {
 		 return ResponseEntity.ok(service.findAll());
 	}
 	@GetMapping("/cnpj/{cnpj}")
 	@ResponseBody
-    public ResponseEntity<HotelCaliforniaModel> AcharPeloPorCnpj(@PathVariable String cnpj) {
+    public ResponseEntity<Object> AcharPeloPorCnpj(@PathVariable String cnpj) {
 		return service.buscarPorCnpj(cnpj);
     }
-	
+	@GetMapping("/local/{local}")
+	@ResponseBody
+    public ResponseEntity<HotelCaliforniaModel> AcharPorlocal(@PathVariable String local) {
+		return service.buscarPorlocal(local);
+    }
+
 	@PostMapping(value= "/inserir")
 	public HotelCaliforniaModel criar(@RequestBody HotelCaliforniaModel hotelCaliforniaModel) {
 		
@@ -52,30 +57,21 @@ public class HotelCaliforniaController {
 	}
     @GetMapping(value = "/buscar/{id}")
     public ResponseEntity<Object> buscarId(@PathVariable(value="id") Long id) {
-    	Optional<HotelCaliforniaModel> californiaModel = service.acharId(id);
-    	
-    	if(!californiaModel.isPresent()) 
-    		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel não encontrado");
- 		return  ResponseEntity.status(HttpStatus.OK).body(service.acharId(id));
+           return service.acharId(id);
     
     }
     
     @PutMapping(value="/editar/{id}")
     @ResponseBody
     public ResponseEntity<Object> editar(@PathVariable(value="id")Long id,@RequestBody HotelCaliforniaModel hotelCaliforniaModel) {
-    	
-    	Optional<HotelCaliforniaModel> hotelOptional = service.acharId(id);
-    	
-    	if(!hotelOptional.isPresent()) {
-    		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel não encontrado");}
-    	service.atualizar(id, hotelCaliforniaModel);
-    	return ResponseEntity.status(HttpStatus.OK).body(hotelCaliforniaModel);
-    }
+  
+    	return service.atualizar(id, hotelCaliforniaModel); 
     
+    }
     @DeleteMapping(path = "/deletar/{id}")
     public ResponseEntity<?> remover(@PathVariable(value = "id") Long id) {
-        	service.deletar(id);
-        	return ResponseEntity.noContent().build();
+        return	service.deletar(id);
+        	
     }	  
     
 }
