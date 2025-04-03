@@ -3,6 +3,7 @@ package br.com.hotelCalifornia.domain.service;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import br.com.hotelCalifornia.api.dto.HotelCaliforniaDto;
 import br.com.hotelCalifornia.infraestructure.model.HotelCaliforniaModel;
 import br.com.hotelCalifornia.infraestructure.repository.HotelCaliforniaRepository;
 
@@ -26,7 +28,40 @@ public class HotelCaliforniaService {
     HotelCaliforniaService(HotelCaliforniaRepository repository) {
         this.repository = repository;
     }
-	
+    
+    public List<HotelCaliforniaDto> listando(){
+    	List<HotelCaliforniaModel> hotelList = 	repository.findAll();
+    	return toDtoList(hotelList);
+    }
+    
+    
+	@Transactional
+    public HotelCaliforniaDto salvando(HotelCaliforniaDto dto) {
+    	HotelCaliforniaModel hotel = toModel(dto);
+    	HotelCaliforniaModel hotelSalvo = repository.save(hotel);
+        	
+    	return toDto(hotelSalvo);
+    }
+    
+  //Converter
+  	private HotelCaliforniaModel toModel(HotelCaliforniaDto dto) {
+  		HotelCaliforniaModel hotel = new HotelCaliforniaModel();
+    	BeanUtils.copyProperties(dto, hotel);
+    	
+    	return hotel;
+  		
+  	}
+ 	private HotelCaliforniaDto toDto(HotelCaliforniaModel hotel) {
+  		HotelCaliforniaDto dto = new HotelCaliforniaDto();
+    	BeanUtils.copyProperties(hotel, dto);
+    	
+    	return dto;
+  		
+  	}
+ 	private List<HotelCaliforniaDto> toDtoList(List<HotelCaliforniaModel> listaModel){
+ 		return listaModel.stream().map(this::toDto).collect(Collectors.toList());
+ 	}
+  	
 	
 	public ResponseEntity<Object> findAll() {
 	
@@ -40,14 +75,6 @@ public class HotelCaliforniaService {
 		return ResponseEntity.status(HttpStatus.OK).body(listaTodos); 
 		
 		
-		
-	}
-	@Transactional
-	public HotelCaliforniaModel create(HotelCaliforniaModel hotelCaliforniaModel) {
-		
-		logger.info("Metodo create");
-
-		return repository.save(hotelCaliforniaModel);
 		
 	}
 	public ResponseEntity<Object> acharId(Long id) {
@@ -78,7 +105,7 @@ public class HotelCaliforniaService {
     			.orElse(ResponseEntity.notFound().build());
         }
 	@Transactional
-	public ResponseEntity<Object> atualizar(Long id, HotelCaliforniaModel hotelCaliforniaModel) {
+	public ResponseEntity<Object> atualizar(Long id, HotelCaliforniaDto hotelCaliforniaDto) {
 		logger.info("Metodo Atualizar");
   
         Optional<HotelCaliforniaModel> hotelOptional = repository.findById(id);
@@ -87,13 +114,14 @@ public class HotelCaliforniaService {
     		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel não encontrado");}
 		
 		HotelCaliforniaModel novoHotel = repository.findById(id).get();
-    	BeanUtils.copyProperties(hotelCaliforniaModel, novoHotel,"id"); // o terceiro parametro "id" assegura a alteração do registro
+    	BeanUtils.copyProperties(hotelCaliforniaDto, novoHotel,"id"); // o terceiro parametro "id" assegura a alteração do registro
     	                                                                // se não colocar, a biblioteca vai criar um novo registro com um
     	                                                               // com um novo id, com os dados alterados  
     	
     	try {
-    		repository.save(novoHotel);
-	        return ResponseEntity.status(HttpStatus.OK).body(novoHotel);  
+    		repository.save(novoHotel);  
+    		
+	        return ResponseEntity.status(HttpStatus.OK).body(toDto(novoHotel));  
 			
 		} catch (Exception e) {
 			return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ! Hotel não atualizado");

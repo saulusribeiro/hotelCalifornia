@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import br.com.hotelCalifornia.api.dto.HotelCaliforniaDto;
 import br.com.hotelCalifornia.infraestructure.model.HotelCaliforniaModel;
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +20,7 @@ public interface HotelCaliforniaRepository extends JpaRepository<HotelCalifornia
 	
 	@Query(value="SELECT * from hotel_california where local =:local", nativeQuery = true)
 	Optional<HotelCaliforniaModel> acharPorLocal(@PathVariable(value = "local")String local);
+
 
 
 }

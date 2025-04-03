@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.hotelCalifornia.api.dto.HotelCaliforniaDto;
 import br.com.hotelCalifornia.domain.service.HotelCaliforniaService;
 import br.com.hotelCalifornia.infraestructure.model.HotelCaliforniaModel;
 import br.com.hotelCalifornia.infraestructure.repository.HotelCaliforniaRepository;
@@ -35,9 +36,19 @@ public class HotelCaliforniaController {
 	
 	@GetMapping(value= "/listar")
 	@ResponseBody
-	public ResponseEntity<Object> listarTudo() {
-		 return ResponseEntity.ok(service.findAll());
+	public ResponseEntity<List<HotelCaliforniaDto>> listarTudo() {
+		 return ResponseEntity.ok(service.listando());
 	}
+	
+	
+	@PostMapping(value= "/salvar")
+	@ResponseBody
+	public ResponseEntity<HotelCaliforniaDto> save(@RequestBody HotelCaliforniaDto hotelDto) {
+		 return ResponseEntity.status(HttpStatus.OK).body(service.salvando(hotelDto));
+	}
+
+	
+	
 	@GetMapping("/cnpj/{cnpj}")
 	@ResponseBody
     public ResponseEntity<Object> AcharPeloPorCnpj(@PathVariable String cnpj) {
@@ -49,25 +60,20 @@ public class HotelCaliforniaController {
 		return service.buscarPorlocal(local);
     }
 
-	@PostMapping(value= "/inserir")
-	public HotelCaliforniaModel criar(@RequestBody HotelCaliforniaModel hotelCaliforniaModel) {
-		
-		return service.create(hotelCaliforniaModel);
-		
-	}
     @GetMapping(value = "/buscar/{id}")
     public ResponseEntity<Object> buscarId(@PathVariable(value="id") Long id) {
            return service.acharId(id);
     
     }
     
-    @PutMapping(value="/editar/{id}")
+    @PutMapping(value="/atualizar/{id}")
     @ResponseBody
-    public ResponseEntity<Object> editar(@PathVariable(value="id")Long id,@RequestBody HotelCaliforniaModel hotelCaliforniaModel) {
+    public ResponseEntity<Object> update(@PathVariable(value="id")Long id,@RequestBody HotelCaliforniaDto hotelCaliforniaDto) {
   
-    	return service.atualizar(id, hotelCaliforniaModel); 
+    	return service.atualizar(id, hotelCaliforniaDto); 
     
     }
+    
     @DeleteMapping(path = "/deletar/{id}")
     public ResponseEntity<?> remover(@PathVariable(value = "id") Long id) {
         return	service.deletar(id);
