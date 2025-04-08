@@ -25,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/app/hotel") // localhost:8080/api/hotel  e http://localhost:8090/swagger-ui/index.html
-//@RequiredArgsConstructor
 public class HotelCaliforniaController {
 	
 	@Autowired
@@ -56,7 +55,7 @@ public class HotelCaliforniaController {
     }
 	@GetMapping("/local/{local}")
 	@ResponseBody
-    public ResponseEntity<HotelCaliforniaModel> AcharPorlocal(@PathVariable String local) {
+    public ResponseEntity<Object> AcharPorlocal(@PathVariable String local) {
 		return service.buscarPorlocal(local);
     }
 

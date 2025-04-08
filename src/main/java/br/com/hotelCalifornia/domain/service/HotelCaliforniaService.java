@@ -51,6 +51,7 @@ public class HotelCaliforniaService {
     	return hotel;
   		
   	}
+  	
  	private HotelCaliforniaDto toDto(HotelCaliforniaModel hotel) {
   		HotelCaliforniaDto dto = new HotelCaliforniaDto();
     	BeanUtils.copyProperties(hotel, dto);
@@ -58,33 +59,25 @@ public class HotelCaliforniaService {
     	return dto;
   		
   	}
- 	private List<HotelCaliforniaDto> toDtoList(List<HotelCaliforniaModel> listaModel){
- 		return listaModel.stream().map(this::toDto).collect(Collectors.toList());
+ 	//------------------------------//
+ 	 
+ 	private List<HotelCaliforniaDto> toDtoList(List<HotelCaliforniaModel> listaModel) {
+ 	    return listaModel.stream()
+ 	                     .map(model -> toDto(model))  // Usando uma expressão mais explícita
+ 	                     .collect(Collectors.toList());
  	}
-  	
 	
-	public ResponseEntity<Object> findAll() {
-	
-		logger.info("Metodo findAll");
-		
-		List<HotelCaliforniaModel> listaTodos = repository.findAll();
-		
-		if(listaTodos.isEmpty()) {
-			return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel não encontrado");}
-		
-		return ResponseEntity.status(HttpStatus.OK).body(listaTodos); 
-		
-		
-		
-	}
 	public ResponseEntity<Object> acharId(Long id) {
 		
     		logger.info("Metodo acharId");
     		
     		Optional<HotelCaliforniaModel> californiaModel = repository.findById(id);
-    		if(!californiaModel.isPresent()) 
-        		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel não encontrado");
-			return ResponseEntity.status(HttpStatus.OK).body(californiaModel);
+    		
+    		if(!californiaModel.isPresent()) {
+    			return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel não encontrado"); }
+    		HotelCaliforniaModel cm = californiaModel.get();
+    		
+     		return ResponseEntity.status(HttpStatus.OK).body(toDto(cm));
 	}
 	public ResponseEntity<Object> buscarPorCnpj(String cnpj) {
 		
@@ -93,16 +86,20 @@ public class HotelCaliforniaService {
 	    	Optional<HotelCaliforniaModel> californiaModel =  repository.acharPorCnpj(cnpj);
     		if(!californiaModel.isPresent()) 
         		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel não encontrado");
+            HotelCaliforniaModel cm = californiaModel.get();
     		
-    		return ResponseEntity.status(HttpStatus.OK).body(californiaModel);  
-	        
+     		return ResponseEntity.status(HttpStatus.OK).body(toDto(cm));
 	        }
-	public ResponseEntity<HotelCaliforniaModel> buscarPorlocal(String local) {
+	public ResponseEntity<Object> buscarPorlocal(String local) {
 		
      	logger.info("Metodo acharPorLocal");
      	
-        return repository.acharPorLocal(local).map(mapping->ResponseEntity.ok().body(mapping))
-    			.orElse(ResponseEntity.notFound().build());
+        Optional<HotelCaliforniaModel> californiaModel =  repository.acharPorLocal(local);
+		if(!californiaModel.isPresent()) 
+    		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel neste CNPJ não encontrado");
+        HotelCaliforniaModel cm = californiaModel.get();
+		
+ 		return ResponseEntity.status(HttpStatus.OK).body(toDto(cm));
         }
 	@Transactional
 	public ResponseEntity<Object> atualizar(Long id, HotelCaliforniaDto hotelCaliforniaDto) {
