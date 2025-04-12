@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import br.com.hotelCalifornia.api.dto.HotelCaliforniaDto;
+import br.com.hotelCalifornia.domain.converter.HotelCaliforniaConverter;
 import br.com.hotelCalifornia.infraestructure.model.HotelCaliforniaModel;
 import br.com.hotelCalifornia.infraestructure.repository.HotelCaliforniaRepository;
 
@@ -22,52 +24,31 @@ public class HotelCaliforniaService {
 	
 	private final HotelCaliforniaRepository repository;
 
+	
 	private Logger logger = Logger.getLogger(HotelCaliforniaService.class.getName());
-
-
+	
+	
+  
     HotelCaliforniaService(HotelCaliforniaRepository repository) {
         this.repository = repository;
     }
     
     public List<HotelCaliforniaDto> listando(){
     	List<HotelCaliforniaModel> hotelList = 	repository.findAll();
-    	return toDtoList(hotelList);
+    	return  converter.toDtoList(hotelList);
     }
     
-    
+    HotelCaliforniaConverter converter = new HotelCaliforniaConverter();
+
 	@Transactional
     public HotelCaliforniaDto salvando(HotelCaliforniaDto dto) {
-    	HotelCaliforniaModel hotel = toModel(dto);
+    	HotelCaliforniaModel hotel = converter.toModel(dto);
     	HotelCaliforniaModel hotelSalvo = repository.save(hotel);
         	
-    	return toDto(hotelSalvo);
+    	return converter.toDto(hotelSalvo);
     }
     
-  //Converter
-  	private HotelCaliforniaModel toModel(HotelCaliforniaDto dto) {
-  		HotelCaliforniaModel hotel = new HotelCaliforniaModel();
-    	BeanUtils.copyProperties(dto, hotel);
-    	
-    	return hotel;
-  		
-  	}
-  	
- 	private HotelCaliforniaDto toDto(HotelCaliforniaModel hotel) {
-  		HotelCaliforniaDto dto = new HotelCaliforniaDto();
-    	BeanUtils.copyProperties(hotel, dto);
-    	
-    	return dto;
-  		
-  	}
- 	//------------------------------//
- 	 
- 	private List<HotelCaliforniaDto> toDtoList(List<HotelCaliforniaModel> listaModel) {
- 	    return listaModel.stream()
- 	                     .map(model -> toDto(model))  // Usando uma expressão mais explícita
- 	                     .collect(Collectors.toList());
- 	}
-	
-	public ResponseEntity<Object> acharId(Long id) {
+ 	public ResponseEntity<Object> acharId(Long id) {
 		
     		logger.info("Metodo acharId");
     		
@@ -77,7 +58,7 @@ public class HotelCaliforniaService {
     			return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel não encontrado"); }
     		HotelCaliforniaModel cm = californiaModel.get();
     		
-     		return ResponseEntity.status(HttpStatus.OK).body(toDto(cm));
+     		return ResponseEntity.status(HttpStatus.OK).body(converter.toDto(cm));
 	}
 	public ResponseEntity<Object> buscarPorCnpj(String cnpj) {
 		
@@ -88,7 +69,7 @@ public class HotelCaliforniaService {
         		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel não encontrado");
             HotelCaliforniaModel cm = californiaModel.get();
     		
-     		return ResponseEntity.status(HttpStatus.OK).body(toDto(cm));
+     		return ResponseEntity.status(HttpStatus.OK).body(converter.toDto(cm));
 	        }
 	public ResponseEntity<Object> buscarPorlocal(String local) {
 		
@@ -99,7 +80,7 @@ public class HotelCaliforniaService {
     		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel neste CNPJ não encontrado");
         HotelCaliforniaModel cm = californiaModel.get();
 		
- 		return ResponseEntity.status(HttpStatus.OK).body(toDto(cm));
+ 		return ResponseEntity.status(HttpStatus.OK).body(converter.toDto(cm));
         }
 	@Transactional
 	public ResponseEntity<Object> atualizar(Long id, HotelCaliforniaDto hotelCaliforniaDto) {
@@ -118,7 +99,7 @@ public class HotelCaliforniaService {
     	try {
     		repository.save(novoHotel);  
     		
-	        return ResponseEntity.status(HttpStatus.OK).body(toDto(novoHotel));  
+	        return ResponseEntity.status(HttpStatus.OK).body(converter.toDto(novoHotel));  
 			
 		} catch (Exception e) {
 			return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ! Hotel não atualizado");
