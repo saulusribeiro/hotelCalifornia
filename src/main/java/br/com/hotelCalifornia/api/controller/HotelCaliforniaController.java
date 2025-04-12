@@ -35,7 +35,7 @@ public class HotelCaliforniaController {
 	
 	@GetMapping(value= "/listar")
 	@ResponseBody
-	public ResponseEntity<List<HotelCaliforniaDto>> listarTudo() {
+	public ResponseEntity<List<HotelCaliforniaDto>> listarTudo()  {
 		 return ResponseEntity.ok(service.listando());
 	}
 	
@@ -65,11 +65,11 @@ public class HotelCaliforniaController {
     
     }
     
-    @PutMapping(value="/atualizar/{id}")
+    @PutMapping(value="/atualizar/{cnpj}")
     @ResponseBody
-    public ResponseEntity<Object> update(@PathVariable(value="id")Long id,@RequestBody HotelCaliforniaDto hotelCaliforniaDto) {
+    public ResponseEntity<HotelCaliforniaDto> update(@PathVariable(value="cnpj")String cnpj, @RequestBody HotelCaliforniaDto hotelCaliforniaDto) {
   
-    	return service.atualizar(id, hotelCaliforniaDto); 
+    	return service.atualizar(cnpj, hotelCaliforniaDto); 
     
     }
     

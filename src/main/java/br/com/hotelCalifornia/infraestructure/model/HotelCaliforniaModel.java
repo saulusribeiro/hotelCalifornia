@@ -106,7 +106,7 @@ public class HotelCaliforniaModel implements Serializable {
 		return capacidade == other.capacidade && Objects.equals(cnpj, other.cnpj) && Objects.equals(id, other.id)
 				&& Objects.equals(local, other.local) && Objects.equals(name, other.name);
 	}
-
+	
 	
 
 	

@@ -13,11 +13,15 @@ public class HotelCaliforniaConverter {
 	
   	@SuppressWarnings("unused")
 	public HotelCaliforniaModel toModel(HotelCaliforniaDto dto) {
-  		HotelCaliforniaModel hotel = new HotelCaliforniaModel();
+  		
+  		 		
+  		
+    	HotelCaliforniaModel hotel = new HotelCaliforniaModel();
     	BeanUtils.copyProperties(dto, hotel);
     	
     	return hotel;
-  		
+    	
+    	
   	}
   	
  	@SuppressWarnings("unused")
@@ -35,6 +39,12 @@ public class HotelCaliforniaConverter {
  	                     .map(model -> toDto(model))  // Usando uma expressão mais explícita
  	                     .collect(Collectors.toList());
  	}
+
+	public HotelCaliforniaDto toEntityUpdate(HotelCaliforniaModel hotelExist, HotelCaliforniaDto hotelCaliforniaDto,
+			String cnpj) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
 
