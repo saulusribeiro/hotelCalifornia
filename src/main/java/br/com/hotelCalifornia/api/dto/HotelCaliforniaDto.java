@@ -1,26 +1,9 @@
 package br.com.hotelCalifornia.api.dto;
 
-import java.util.Objects;
-
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonProperty.Access;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-@Builder
 
 public class HotelCaliforniaDto {
 	
@@ -29,6 +12,7 @@ public class HotelCaliforniaDto {
 	private Long id;
 	
 	@NotNull(message="Nome do Hotel é obrigatório")
+	@Size(min = 1, max = 100, message = "Nome do hotel deve ter entre 1 e 100 caracteres" )
 	private String name;
 
 	@NotNull(message="Nome do Local é obrigatório")

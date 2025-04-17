@@ -40,10 +40,20 @@ public class HotelCaliforniaConverter {
  	                     .collect(Collectors.toList());
  	}
 
-	public HotelCaliforniaDto toEntityUpdate(HotelCaliforniaModel hotelExist, HotelCaliforniaDto hotelCaliforniaDto,
+	public HotelCaliforniaModel toEntityUpdate(HotelCaliforniaModel hotelExist, HotelCaliforniaDto hotelCaliforniaDto,
 			String cnpj) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		// Atualiza o conteudo de DTO que não esteja nulo e atualiza MODEL e retorna MODEL
+		
+		hotelExist.setId(hotelCaliforniaDto.getId()!=null?hotelCaliforniaDto.getId():hotelExist.getId());
+		hotelExist.setName(hotelCaliforniaDto.getName()!=null?hotelCaliforniaDto.getName():hotelExist.getName());
+		hotelExist.setLocal(hotelCaliforniaDto.getLocal()!=null?hotelCaliforniaDto.getLocal():hotelExist.getLocal());
+		hotelExist.setCapacidade(hotelCaliforniaDto.getCapacidade()!=0?hotelCaliforniaDto.getCapacidade():hotelExist.getCapacidade());
+		hotelExist.setCnpj(cnpj);
+		
+    	return hotelExist;
+    
+	
 	}
 
 

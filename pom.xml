@@ -49,6 +49,7 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 <!-- DEPENDENCIA SWAGGER 3 -->		
 		<dependency>
 		    <groupId>org.springdoc</groupId>
