@@ -2,6 +2,8 @@ package br.com.hotelCalifornia.api.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,7 +68,7 @@ public class HotelCaliforniaController {
 		)
 	@PostMapping(value= "/salvar")
 	@ResponseBody
-	public ResponseEntity<HotelCaliforniaDto> save(@RequestBody HotelCaliforniaDto hotelDto) {
+	public ResponseEntity<HotelCaliforniaDto> save(@Valid @RequestBody HotelCaliforniaDto hotelDto) {
 		 return ResponseEntity.status(HttpStatus.OK).body(service.salvando(hotelDto));
 	}
 

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import br.com.hotelCalifornia.api.dto.HotelCaliforniaDto;
 import br.com.hotelCalifornia.domain.converter.HotelCaliforniaConverter;
+import br.com.hotelCalifornia.infraestructure.exceptions.BadRequestException;
 import br.com.hotelCalifornia.infraestructure.exceptions.BusinessException;
 import br.com.hotelCalifornia.infraestructure.exceptions.ConflictException;
 import br.com.hotelCalifornia.infraestructure.exceptions.UnprocessableEntityException;
@@ -48,8 +49,12 @@ public class HotelCaliforniaService {
     	    	return  converter.toDtoList(hotelList);
     	} catch (UnprocessableEntityException unp) {
     		throw new UnprocessableEntityException(unp.getMessage());
-    	} catch (Exception e) {
-    		throw new  BusinessException("Erro ao buscar hotéis");
+    	} catch (BadRequestException brq) {
+			throw new BadRequestException(brq.getMessage());
+    	} catch (BusinessException e) {
+			throw new BusinessException("Erro ao listar Hotéis" );
+		} catch (Exception e) {
+    		throw new  BusinessException("Erro ao listar hotéis "+e );
     	}
     }
 
@@ -60,7 +65,7 @@ public class HotelCaliforniaService {
         Optional<HotelCaliforniaModel> hotelExist = repository.acharPorCnpj(dto.getCnpj());
        
 		if(!hotelExist.isEmpty()) {
-			throw new UnprocessableEntityException("CNPJ duplicado " + dto.getCnpj());
+			throw new ConflictException("CNPJ duplicado " + dto.getCnpj());
 		}else{
 			try {
 				HotelCaliforniaModel hotel = converter.toModel(dto);
@@ -68,15 +73,12 @@ public class HotelCaliforniaService {
 		    	return converter.toDto(hotelSalvo);
 			} catch (ConflictException ce) {
 				throw new ConflictException(ce.getMessage());
-	 		} catch (Exception e) {
-				e.printStackTrace();
+			} catch (BadRequestException brq) {
+					throw new BadRequestException("Erro requisição "+brq.getMessage());
+     		} catch (BusinessException e) {
 				throw new BusinessException("Erro ao salvar o Hotel "+ e );
 			}	
-	       	          
 		}  
-
- 		 	
-    
     }
     
  	public ResponseEntity<Object> acharId(Long id) {
@@ -88,8 +90,13 @@ public class HotelCaliforniaService {
     		if(!californiaModel.isPresent()) {
     			return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel não encontrado"); }
     		HotelCaliforniaModel cm = californiaModel.get();
-    		
-     		return ResponseEntity.status(HttpStatus.OK).body(converter.toDto(cm));
+    		try {
+    			return ResponseEntity.status(HttpStatus.OK).body(converter.toDto(cm));	
+	        } catch (BadRequestException brq) {
+					throw new BadRequestException("Erro requisição "+brq.getMessage());
+	    	} catch (BusinessException e) {
+				throw new BusinessException("Erro ao buscar Hotel "+ e );
+			}	
 	}
 	public ResponseEntity<Object> buscarPorCnpj(String cnpj) {
 		
@@ -99,9 +106,14 @@ public class HotelCaliforniaService {
     		if(!californiaModel.isPresent()) 
         		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel não encontrado no CNPJ "+cnpj);
             HotelCaliforniaModel cm = californiaModel.get();
-    		
-     		return ResponseEntity.status(HttpStatus.OK).body(converter.toDto(cm));
-	        }
+            try {
+         		return ResponseEntity.status(HttpStatus.OK).body(converter.toDto(cm));
+            } catch (BadRequestException brq) {
+				throw new BadRequestException("Erro requisição "+brq.getMessage());
+        	} catch (BusinessException e) {
+				throw new BusinessException("Erro ao buscar por CNPJ "+ e );
+			}	
+           }
 	public ResponseEntity<Object> buscarPorlocal(String local) {
 		
      	logger.info("Metodo acharPorLocal");
@@ -110,9 +122,15 @@ public class HotelCaliforniaService {
 		if(!californiaModel.isPresent()) 
     		return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hotel não encontrado no Local "+local);
         HotelCaliforniaModel cm = californiaModel.get();
-		
- 		return ResponseEntity.status(HttpStatus.OK).body(converter.toDto(cm));
-        }
+        try {
+		  return ResponseEntity.status(HttpStatus.OK).body(converter.toDto(cm));
+        		
+	    } catch (BadRequestException brq) {
+			throw new BadRequestException("Erro requisição "+brq.getMessage());
+		} catch (BusinessException e) {
+			throw new BusinessException("Erro ao buscar por local o Hotel "+ e );
+		}	
+    }
 	
 	@Modifying
 	@Transactional
@@ -128,22 +146,27 @@ public class HotelCaliforniaService {
 			
 			hotelUpdate = hotelExist.get();
 			hotelUpdate = converter.toEntityUpdate(hotelUpdate, hotelCaliforniaDto, cnpj);
-		    salvarHotel(hotelUpdate);
 	        try {
-	          return ResponseEntity.ok(converter.toDto(hotelUpdate));
+              salvarHotel(hotelUpdate);
+	    	  return ResponseEntity.ok(converter.toDto(hotelUpdate));
 	        } catch (UnprocessableEntityException unp) {
 			  throw new UnprocessableEntityException(unp.getMessage());
-	        }
+	        } catch (BadRequestException brq) {
+				throw new BadRequestException("Erro requisição "+brq.getMessage());
+	    	} catch (BusinessException e) {
+				throw new BusinessException("Erro ao atualizar o Hotel "+ e );
+			}	
 		}
 	}
 	private HotelCaliforniaModel salvarHotel(HotelCaliforniaModel entityUpdate) {
+		
 		 try {
 			 return repository.save(entityUpdate);
-		 } catch (Exception e) {
-	    		throw new  BusinessException("Erro ao atualizar hotel ");
-	    	}	  
-		 
-		
+		 } catch (BadRequestException brq) {
+				throw new BadRequestException("Erro requisição "+brq.getMessage());
+		 } catch (BusinessException e) {
+					throw new BusinessException("Erro ao salvar o Hotel "+ e );
+		 } 
 	}
 
 
@@ -162,12 +185,17 @@ public class HotelCaliforniaService {
 	     		   repository.deleteById(id);
 	      	
 	     	       return ResponseEntity.ok().body("DELETADO COM SUCESSO");}
-	         ).orElse(ResponseEntity.noContent().build());   
-		} catch (Exception e) {
-			return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ! Hotel não deletado");
-		}
- 
-     	
+	         ).orElse(ResponseEntity.noContent().build());  
+	    } catch (UnprocessableEntityException unp) {
+			throw new UnprocessableEntityException(unp.getMessage()); 
+	    } catch (BadRequestException brq) {
+			throw new BadRequestException("Erro requisição "+brq.getMessage());
+	    } catch (BusinessException be) {
+				throw new BusinessException("Erro ao salvar o Hotel "+ be );
+	    } catch (Exception e) {
+			throw new BusinessException("erro ao deletar "+e); 
+		}	
+	     	
 
  }	
 	 

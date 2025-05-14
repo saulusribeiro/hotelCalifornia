@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Component;
 
 import br.com.hotelCalifornia.api.dto.HotelCaliforniaDto;
 import br.com.hotelCalifornia.infraestructure.model.HotelCaliforniaModel;
 
+@Component
 public class HotelCaliforniaConverter {
 	
 	
